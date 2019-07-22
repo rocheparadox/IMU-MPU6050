@@ -41,8 +41,8 @@ class MPU:
 
     def get_integrated_data(self, high_address, low_address):
 
-        high_data=self.read_raw_data(self.device_address, high_address)
-        low_data=self.read_raw_data(self.device_address, low_address)
+        high_data=self.read_raw_data(high_address)
+        low_data=self.read_raw_data(low_address)
 
         return ((high_data << 8) | low_data)
 
