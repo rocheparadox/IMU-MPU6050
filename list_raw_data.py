@@ -1,7 +1,7 @@
 #Author : Roche Christopher
 #File created on 22 Jul 2019 10:02 PM
 
-from .mpu import MPU
+from mpu import MPU
 import time
 
 # variables
