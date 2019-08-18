@@ -11,31 +11,49 @@ class MPU:
     def __init__(self, device_address):
         self.device_address = device_address
 
-    def initialize(self):
+    def initialize(self, general_config=0, gyro_config=28, accelerometer_config=0, smplrt_div_value = 7):
 
         # address of some important registers
         PWR_MGMT_1=0X6b
         SMPLRT_DIV=0X19
         CONFIG=0X1A
         GYRO_CONFIG=0X1B
+        ACCL_CONFIG=0X1C
         INT_ENABLE=0X38
 
         # write data into some registers
 
         #write to configuration register
-        bus.write_byte_data(self.device_address, CONFIG, 0)
+        bus.write_byte_data(self.device_address, CONFIG, general_config)
 
         # write to power management register - set  "PLL with X axis gyroscope reference" as clock source
         bus.write_byte_data(self.device_address, PWR_MGMT_1, 1)
 
         # write to smplrt_div ---> Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
-        bus.write_byte_data(self.device_address, SMPLRT_DIV, 7)
+        bus.write_byte_data(self.device_address, SMPLRT_DIV, smplrt_div_value)
 
-        # set the gyro configuration to 2000 degrees / second
-        bus.write_byte_data(self.device_address, GYRO_CONFIG, 28)
+        # set the gyro configuration to 2000 degrees / second -- default (when gyro_config is 28)
+        bus.write_byte_data(self.device_address, GYRO_CONFIG, gyro_config)
+
+        # set the accelerometer configuration to 2000 degrees / second -- default (when gyro_config is 28)
+        bus.write_byte_data(self.device_address, ACCL_CONFIG, accelerometer_config)
 
         # write to interrupt enable register
         bus.write_byte_data(self.device_address, INT_ENABLE, 1)
+
+    def set_general_configuration(self, configuration):
+        print("setting general configuration to " + str(configuration))
+        bus.write_byte_data(self.device_address, 0X1A, configuration)
+
+    def set_gyro_configuration(self, configuration):
+        print("setting gyroscope configuration to " + str(configuration))
+        bus.write_byte_data(self.device_address, 0X1B, configuration)
+
+    def set_accelerometer_configuration(self, configuration):
+        print("setting accelerometer configuration to " + str(configuration))
+        bus.write_byte_data(self.device_address, 0X1C, configuration)
+
+
 
 
     def read_raw_data(self, register_address):
