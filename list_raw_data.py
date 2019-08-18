@@ -30,6 +30,7 @@ device_address = 0X68
 # temp_out_h = 0X42
 
 mpu6050 = MPU(device_address)
+mpu6050.initialize()
 
 while True:
     gyro_x = mpu6050.get_gyro_x()

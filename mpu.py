@@ -22,6 +22,9 @@ class MPU:
 
         # write data into some registers
 
+        #write to configuration register
+        bus.write_byte_data(self.device_address, CONFIG, 0)
+
         # write to power management register - set  "PLL with X axis gyroscope reference" as clock source
         bus.write_byte_data(self.device_address, PWR_MGMT_1, 1)
 
