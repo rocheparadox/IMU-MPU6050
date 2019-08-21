@@ -96,19 +96,19 @@ class MPU:
 
         accl_x_out_h = 0X3B
         accl_x_out_l = 0X3C
-        return self.get_integrated_data(accl_x_out_h, accl_x_out_l)
+        return self.get_signed_value(self.get_integrated_data(accl_x_out_h, accl_x_out_l))
 
     def get_accl_y(self):
 
         accl_y_out_h = 0X3D
         accl_y_out_l = 0X3E
-        return self.get_integrated_data(accl_y_out_h, accl_y_out_l)
+        return self.get_signed_value(self.get_integrated_data(accl_y_out_h, accl_y_out_l))
 
     def get_accl_z(self):
 
         accl_z_out_h = 0X3F
         accl_z_out_l = 0X40
-        return self.get_integrated_data(accl_z_out_h, accl_z_out_l)
+        return self.get_signed_value(self.get_integrated_data(accl_z_out_h, accl_z_out_l))
 
     def get_temp_data(self):
         # temperature sensor register address
