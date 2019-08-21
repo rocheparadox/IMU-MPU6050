@@ -13,7 +13,6 @@ device_address = 0X68
 
 mpu6050 = MPU(device_address)
 
-#gyro related variables
 
 mpu6050.initialize(accelerometer_config=0, smplrt_div_value = 0)
 gyro_to_angle_dt = 0.061035156 # 4000 / 2**16

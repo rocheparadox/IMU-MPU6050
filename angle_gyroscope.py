@@ -53,7 +53,7 @@ while True:
 
     angle_x = angle_x + (angle_x_dt * dt)
     angle_y = angle_y + (angle_y_dt * dt)
-    print(angle_y_dt, angle_y)
+    print(angle_x, angle_y)
 
     #print("before loop" , time.time() - p_time)
     #time.sleep(dt)
