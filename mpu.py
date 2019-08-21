@@ -11,7 +11,7 @@ class MPU:
     def __init__(self, device_address):
         self.device_address = device_address
 
-    def initialize(self, general_config=0, gyro_config=28, accelerometer_config=0, smplrt_div_value = 7):
+    def initialize(self, general_config=0, gyro_config=8, accelerometer_config=0, smplrt_div_value = 7):
 
         # address of some important registers
         PWR_MGMT_1=0X6b
@@ -33,6 +33,7 @@ class MPU:
         bus.write_byte_data(self.device_address, SMPLRT_DIV, smplrt_div_value)
 
         # set the gyro configuration to 2000 degrees / second -- default (when gyro_config is 28)
+        print(gyro_config)
         bus.write_byte_data(self.device_address, GYRO_CONFIG, gyro_config)
 
         # set the accelerometer configuration to 2000 degrees / second -- default (when gyro_config is 28)
@@ -66,18 +67,24 @@ class MPU:
         low_data=self.read_raw_data(low_address)
 
         return ((high_data << 8) | low_data)
+    
+    def get_signed_value(self, value):
+        if value > 32768 :
+            return ( 65536 - value ) * (-1)
+        else:
+            return value
 
     def get_gyro_x(self):
 
         gyro_x_out_h = 0X43
         gyro_x_out_l = 0X44
-        return self.get_integrated_data(gyro_x_out_h, gyro_x_out_l)
-
+        return self.get_signed_value(self.get_integrated_data(gyro_x_out_h, gyro_x_out_l))
+        
     def get_gyro_y(self):
 
         gyro_y_out_h = 0X45
         gyro_y_out_l = 0X46
-        return self.get_integrated_data(gyro_y_out_h, gyro_y_out_l)
+        return self.get_signed_value(self.get_integrated_data(gyro_y_out_h, gyro_y_out_l))
 
     def get_gyro_z(self):
 

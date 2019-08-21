@@ -44,5 +44,4 @@ while True:
     temperature = mpu6050.get_temp_data()
 
     print(gyro_x, gyro_y, gyro_z, "  |  ", accl_x, accl_y, accl_z, "  |  ", temperature)
-
     time.sleep(0.2)
