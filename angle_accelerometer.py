@@ -20,6 +20,9 @@ mpu6050.initialize(accelerometer_config=int('00011000',2), smplrt_div_value = 0)
 accl_config_const = 2048 #2048 LSB
 dt = 0.1 # 1 deka sec i.e 0.1 sec
 
+#Restrict pitch from -90 to +90 -- enables roll to be measured from 180 to -180
+restrict_pitch = True
+
 accl_x = 0
 accl_y = 0
 accl_z = 0
@@ -28,59 +31,52 @@ pitch = 0
 roll = 0
 
 while True:
-    #accl_x = mpu6050.get_accl_x() - accl_x_offset
-    #accl_y = mpu6050.get_accl_y() - accl_y_offset
-    #accl_z = mpu6050.get_accl_z() - accl_z_offset
-    
+   
     accl_x = mpu6050.get_accl_x()
     accl_y = mpu6050.get_accl_y()
     accl_z = mpu6050.get_accl_z()
-    
-    #accl_x = round(mpu6050.get_accl_x(), 2)
-    #accl_y = round(mpu6050.get_accl_y(), 2)
-    #accl_z = round(mpu6050.get_accl_z(), 2)
-    
 
-    #accl_x = accl_x / accl_config_const 
-    #accl_y = accl_y / accl_config_const
-    #accl_z = accl_z / accl_config_const
     
-    #total_vector = accl_x + accl_y + accl_z
-    
-    #print(accl_x)
-    
-    #angle_y = math.asin(accl_x / total_vector) * rad2deg
-    #angle_x = math.asin(accl_y / total_vector) * rad2deg
-    
-    angle_x = math.atan2(accl_y,accl_z) * rad2deg  #calculated pitch
-    angle_y = math.atan(-accl_x/math.sqrt((accl_y**2)+(accl_z**2))) * rad2deg  #Calculated roll
-    
-    
-    
-    if (abs(angle_x) > 120):
-        if (abs(pitch - angle_x) < 20 ) :
-            pitch = angle_x
+    if restrict_pitch:
+
+        angle_y = math.atan2(accl_x,accl_z) * rad2deg  #calculated pitch
+        angle_x = math.atan(-accl_y/math.sqrt((accl_x**2)+(accl_z**2))) * rad2deg  #Calculated roll
+        
+        
+        
+        if (abs(angle_y) > 120):
+            if (abs(roll - angle_y) < 20 ) :  # 20 is not based on any calculation. It is an approximate value to stop angle_y values to shoot up when angle_x goes beyond 90 degrees
+                roll = angle_y
+            else:
+                # retain old value
+                roll = 0
+                pass
         else:
-            # retain old value
-            pitch = 0
-            pass
-    else:
+            roll = angle_y
+        
         pitch = angle_x
     
-    roll = angle_y
-    
-    
-    
-    #lpf_x.update(angle_x)
-    #lpf_y.update(angle_y)
-    #lpf_z.update(accl_z)
-    
-    #angle_x = lpf_x.get_output()
-    #angle_y = lpf_y.get_output()
-    #accl_z = lpf_z.get_output()
-
+    else:
+        #Restrict roll from 90 to -90 enables pitch to be measured from 180 to -180
+        
+        angle_x = math.atan2(accl_y,accl_z) * rad2deg  #calculated pitch
+        angle_y = math.atan(-accl_x/math.sqrt((accl_y**2)+(accl_z**2))) * rad2deg  #Calculated roll
+        
+        
+        
+        if (abs(angle_x) > 120):
+            if (abs(pitch - angle_x) < 20 ) :
+                pitch = angle_x
+            else:
+                # retain old value
+                pitch = 0
+                pass
+        else:
+            pitch = angle_x
+        
+        roll = angle_y
 
     #print(round(accl_x, 5), round(accl_y, 5), round(accl_z, 5))
     
-    print(round(pitch), round(roll))
+    print(round(roll), round(pitch))
     time.sleep(dt)
