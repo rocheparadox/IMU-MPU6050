@@ -11,17 +11,17 @@ class MPU:
 	def __init__(self, device_address):
 		self.device_address = device_address
 
-	def initialize(self, general_config=0, gyro_config=8, accelerometer_config=0, smplrt_div_value = 7, interrupt_enable_config=1):
+    def initialize(self, general_config=0, gyro_config=8, accelerometer_config=0, smplrt_div_value = 7, interrupt_enable_reg=1, interrupt_pin_cfg=0b10100000):
 
-		# address of some important registers
-		PWR_MGMT_1=0X6b
-		SMPLRT_DIV=0X19
-		CONFIG=0X1A
-		GYRO_CONFIG=0X1B
-		ACCL_CONFIG=0X1C
-		INT_ENABLE=0X38
-
-		# write data into some registers
+        # address of some important registers
+        PWR_MGMT_1=0X6b
+        SMPLRT_DIV=0X19
+        CONFIG=0X1A
+        GYRO_CONFIG=0X1B
+        ACCL_CONFIG=0X1C
+        INT_ENABLE=0X38
+        INT_PIN_CFG_ADDR=0x37
+        # write data into some registers
 
 		#write to configuration register
 		bus.write_byte_data(self.device_address, CONFIG, general_config)
@@ -42,9 +42,12 @@ class MPU:
 		# write to interrupt enable register
 		bus.write_byte_data(self.device_address, INT_ENABLE, interrupt_enable_config)
 
-	def set_general_configuration(self, configuration):
-		print("setting general configuration to " + str(configuration))
-		bus.write_byte_data(self.device_address, 0X1A, configuration)
+        # write to interrupt pin configuration register
+        bus.write_byte_data(self.device_address, INT_PIN_CFG_ADDR, interrupt_pin_cfg)
+
+    def set_general_configuration(self, configuration):
+        print("setting general configuration to " + str(configuration))
+        bus.write_byte_data(self.device_address, 0X1A, configuration)
 
 	def set_gyro_configuration(self, configuration):
 		print("setting gyroscope configuration to " + str(configuration))
@@ -82,7 +85,10 @@ class MPU:
 		INT_ADDR = 0x3A
 		return self.read_raw_data(INT_ADDR)
 
-	def get_gyro_x(self):
+    def get_interrupt_status(self):
+        return bus.read_byte_data(self.device_address, 0x3A)
+
+    def get_gyro_x(self):
 
 		gyro_x_out_h = 0X43
 		gyro_x_out_l = 0X44
